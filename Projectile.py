@@ -1,8 +1,18 @@
 import pygame
 
-class Projectile():
+PROJECTILECOLOR = (255,   0,   0)
+BLACK           = (  0,   0,   0)
+
+class Projectile(pygame.sprite.Sprite):
     projectiles = []
     def __init__(self, source, target, speed):
+        super().__init__()
+        self.image = pygame.Surface([4, 4])
+        self.image.set_colorkey(BLACK)
+        self.rect = self.image.get_rect()
+        pygame.draw.circle(self.image, PROJECTILECOLOR,
+                           (self.rect.width//2, self.rect.height//2), 2)
+        
         self.x = source[0]
         self.y = source[1]
         self.movementVector = [target[0], target[1]]
@@ -14,5 +24,6 @@ class Projectile():
         if self.x > surfaceSize[0] or self.x < 0  or \
            self.y > surfaceSize[1] or self.y < 0:
             self.projectiles.remove(self)
-    def draw(self, surface):
-        pygame.draw.circle(surface, (255, 0, 0), (int(self.x), int(self.y)), 2)
+    def render(self, surface):
+        surface.blit(self.image, (self.x, self.y))
+        

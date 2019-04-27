@@ -4,7 +4,6 @@ from Projectile import *
 
 pygame.init()
 size    = (800, 600)
-RED     = (255,   0,   0)
 BGCOLOR = (255, 255, 255)
 screen = pygame.display.set_mode(size)
 pygame.display.set_caption("Top Down")
@@ -18,9 +17,9 @@ def move_entities():
         proj.move(screen.get_size())
 
 def render_entities():
-    hero.draw(screen)
+    hero.render(screen)
     for proj in Projectile.projectiles:
-        proj.draw(screen)
+        proj.render(screen)
     
 def process_keys(keys):
     if keys[pygame.K_w]:
