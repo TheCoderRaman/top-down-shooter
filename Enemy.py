@@ -11,7 +11,7 @@ class Enemy(pygame.sprite.Sprite):
         super().__init__()
         self.image = pygame.Surface([8, 8])
         self.image.fill(pygame.Color('black'))
-        self.rect = self.image.get_rect()
+        self.rect = self.image.get_rect(x=pos[0], y=pos[1])
         
         self.pos = list(pos)
         self.movementVector = [0, 0]
@@ -23,5 +23,6 @@ class Enemy(pygame.sprite.Sprite):
             self.movementVector = normalize_vector(self.movementVector)
         self.pos[0] += self.movementVector[0]*self.movementSpeed*tDelta
         self.pos[1] += self.movementVector[1]*self.movementSpeed*tDelta
+        self.rect.topleft = self.pos
     def render(self, surface):
         surface.blit(self.image, self.pos)

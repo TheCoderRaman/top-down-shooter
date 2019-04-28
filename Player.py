@@ -17,6 +17,7 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(x=screenSize[0]//2,
                                         y=screenSize[1]//2)
         
+        self.pos = [screenSize[0] // 2, screenSize[1] // 2]
         self.movementVector = [0, 0]
         self.movementSpeed = 3
         self.lastShot = 0
@@ -25,29 +26,30 @@ class Player(pygame.sprite.Sprite):
     def move(self, screenSize, tDelta):
         if self.movementVector != [0, 0]:
             self.movementVector = normalize_vector(self.movementVector)
-        newPos = (self.rect.x + self.movementVector[0]*self.movementSpeed*tDelta,
-                  self.rect.y + self.movementVector[1]*self.movementSpeed*tDelta)
+        newPos = (self.pos[0] + self.movementVector[0]*self.movementSpeed*tDelta,
+                  self.pos[1] + self.movementVector[1]*self.movementSpeed*tDelta)
         if newPos[0] < 0:
-            self.rect.x  = 0
+            self.pos[0] = 0
         elif newPos[0] > screenSize[0] - self.rect.width:
-            self.rect.x  = screenSize[0] - self.rect.width
+            self.pos[0] = screenSize[0] - self.rect.width
         else:
-            self.rect.x  = newPos[0]
+            self.pos[0] = newPos[0]
 
         if newPos[1] < 0:
-            self.rect.y = 0
+            self.pos[1] = 0
         elif newPos[1] > screenSize[1]-self.rect.height:
-            self.rect.y = screenSize[1]-self.rect.width
+            self.pos[1] = screenSize[1]-self.rect.width
         else:
-            self.rect.y = newPos[1]
-
+            self.pos[1] = newPos[1]
+        
+        self.rect.topleft = self.pos
         self.movementVector = [0, 0]
     def shoot(self, mousePos):
         if pygame.time.get_ticks() - self.lastShot > self.weaponCooldown:
-            direction = (mousePos[0] - self.rect.x, mousePos[1] - self.rect.y) \
-                if mousePos != self.rect.topleft else (1, 1)
+            direction = (mousePos[0] - self.pos[0], mousePos[1] - self.pos[1]) \
+                if mousePos != self.pos else (1, 1)
             self.lastShot = pygame.time.get_ticks()
-            self.projectiles.add(Projectile(self.rect.topleft,
+            self.projectiles.add(Projectile(self.pos,
                                             normalize_vector(direction), 5))
     def render(self, surface):
-        surface.blit(self.image, self.rect.topleft)
+        surface.blit(self.image, self.pos)
