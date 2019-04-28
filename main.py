@@ -12,14 +12,22 @@ font = pygame.font.Font(None, 30)
 pygame.display.set_caption("Top Down")
 
 done = False
+score = 0
 clock = pygame.time.Clock()
 
 def move_entities(timeDelta):
+    score = 0
     hero.move(screen.get_size(), timeDelta)
+    for enemy in enemies:
+        enemy.move(hero.rect.topleft, timeDelta)    
     for proj in Player.projectiles:
         proj.move(screen.get_size(), timeDelta)
-    for enemy in enemies:
-        enemy.move(hero.rect.topleft, timeDelta)
+        enemiesHit = pygame.sprite.spritecollide(proj, enemies, True)
+        if enemiesHit:
+            proj.kill()
+        for item in enemiesHit:
+            score += 1
+    return score
 
 def render_entities():
     hero.render(screen)
@@ -71,11 +79,11 @@ while not done:
             enemies.add(Enemy((random.randint(0, size[0]), size[1])))
         lastEnemy = currentTime
     
-    move_entities(clock.get_time()/17)
+    score += move_entities(clock.get_time()/17)
     render_entities()
     
-    # fps = font.render(str(len(Player.projectiles)), True, pygame.Color('black'))
-    # screen.blit(fps, (20, 20))
+    fps = font.render(str(score), True, pygame.Color('black'))
+    screen.blit(fps, (20, 20))
     pygame.display.flip()
     clock.tick(60)
 pygame.quit()
