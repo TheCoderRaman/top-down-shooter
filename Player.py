@@ -14,7 +14,6 @@ class Player(pygame.sprite.Sprite):
         self.image = pygame.Surface([8, 8])
         self.image.fill(PLAYERCOLOR)
         self.rect = self.image.get_rect()
-        print(self.rect)
         
         self.x = screenSize[0]//2
         self.y = screenSize[1]//2
@@ -23,11 +22,11 @@ class Player(pygame.sprite.Sprite):
         self.lastShot = 0
         self.weaponCooldown = 200
 
-    def move(self, screenSize):
+    def move(self, screenSize, tDelta):
         if self.movementVector != [0, 0]:
             self.movementVector = normalize_vector(self.movementVector)
-        newPos = (self.x + self.movementVector[0]*self.movementSpeed,
-                  self.y + self.movementVector[1]*self.movementSpeed)
+        newPos = (self.x + self.movementVector[0]*self.movementSpeed*tDelta,
+                  self.y + self.movementVector[1]*self.movementSpeed*tDelta)
         if newPos[0] < 0:
             self.x = 0
         elif newPos[0] > screenSize[0]-self.rect.width:

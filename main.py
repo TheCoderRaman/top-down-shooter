@@ -11,10 +11,10 @@ pygame.display.set_caption("Top Down")
 done = False
 clock = pygame.time.Clock()
 
-def move_entities():
-    hero.move(screen.get_size())
+def move_entities(timeDelta):
+    hero.move(screen.get_size(), timeDelta)
     for proj in Projectile.projectiles:
-        proj.move(screen.get_size())
+        proj.move(screen.get_size(), timeDelta)
 
 def render_entities():
     hero.render(screen)
@@ -49,7 +49,7 @@ while not done:
     process_keys(keys)
     process_mouse(mouse)
         
-    move_entities()
+    move_entities(clock.get_time()/17)
     render_entities()
     
     pygame.display.flip()
