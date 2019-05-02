@@ -22,7 +22,7 @@ class Player(pygame.sprite.Sprite):
         self.alive = True
         self.movementVector = [0, 0]
         self.movementSpeed = 3
-        self.lastShot = 0
+        self.lastShot = pygame.time.get_ticks()
         self.weaponCooldown = 200
 
     def move(self, screenSize, tDelta):

@@ -26,7 +26,7 @@ def move_entities(hero, enemies, timeDelta):
     score = 0
     hero.sprite.move(screen.get_size(), timeDelta)
     for enemy in enemies:
-        enemy.move(hero.sprite.rect.topleft, timeDelta)
+        enemy.move(enemies, hero.sprite.rect.topleft, timeDelta)
         enemy.shoot(hero.sprite.rect.topleft)
     for proj in Enemy.projectiles:
         proj.move(screen.get_size(), timeDelta)
@@ -37,11 +37,10 @@ def move_entities(hero, enemies, timeDelta):
                 hero.sprite.alive = False
     for proj in Player.projectiles:
         proj.move(screen.get_size(), timeDelta)
-        enemiesHit = pygame.sprite.spritecollide(proj, enemies, False)
+        enemiesHit = pygame.sprite.spritecollide(proj, enemies, True)
         if enemiesHit:
-            enemiesHit[0].kill()
             proj.kill()
-            score += 1
+            score += len(enemiesHit)
     return score
 
 def render_entities(hero, enemies):
@@ -87,7 +86,7 @@ def game_loop():
         process_keys(keys, hero)
         process_mouse(mouse, hero)
         
-        if lastEnemy < currentTime - 250:
+        if lastEnemy < currentTime - 250 and len(enemies) < 50:
             spawnSide = random.random()
             if spawnSide < 0.25:
                 enemies.add(Enemy((0, random.randint(0, size[1]))))
@@ -103,7 +102,7 @@ def game_loop():
         render_entities(hero, enemies)
         
         for hp in range(hero.sprite.health):
-            screen.blit(healthRender, (20 + hp*35, 10))
+            screen.blit(healthRender, (15 + hp*35, 0))
         scoreRender = scoreFont.render(str(score), True, pygame.Color('black'))
         screen.blit(scoreRender, (size[0]-50, 20))
         
