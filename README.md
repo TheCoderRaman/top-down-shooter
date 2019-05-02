@@ -1,10 +1,10 @@
 # Top-down shooter
-Before launching the game, you need to install dependencies.
+To launch the game, just open `main.exe` file.
+
+If you want to play your own modified version of the game, you need to install dependencies first.
 ```
 pip install -r requirements.txt
 ```
-
-To launch the game, open `main.exe` file.
 
 ### Controls
 - `WASD` movement
