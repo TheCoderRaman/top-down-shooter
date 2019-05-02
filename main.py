@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import pygame
 import random
 from Player import Player
@@ -8,7 +10,9 @@ pygame.init()
 size    = (800, 600)
 BGCOLOR = (255, 255, 255)
 screen = pygame.display.set_mode(size)
-font = pygame.font.Font(None, 30)
+scoreFont = pygame.font.Font("fonts/UpheavalPro.ttf", 30)
+healthFont = pygame.font.Font("fonts/OmnicSans.ttf", 50)
+healthRender = healthFont.render('z', True, pygame.Color('red'))
 pygame.display.set_caption("Top Down")
 
 done = False
@@ -98,9 +102,10 @@ def game_loop():
         score += move_entities(hero, enemies, clock.get_time()/17)
         render_entities(hero, enemies)
         
-        
-        fps = font.render(str(score), True, pygame.Color('black'))
-        screen.blit(fps, (size[0]-80, 20))
+        for hp in range(hero.sprite.health):
+            screen.blit(healthRender, (20 + hp*35, 10))
+        scoreRender = scoreFont.render(str(score), True, pygame.Color('black'))
+        screen.blit(scoreRender, (size[0]-50, 20))
         
         pygame.display.flip()
         clock.tick(60)
