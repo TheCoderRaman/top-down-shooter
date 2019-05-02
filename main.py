@@ -12,48 +12,100 @@ font = pygame.font.Font(None, 30)
 pygame.display.set_caption("Top Down")
 
 done = False
+hero = pygame.sprite.GroupSingle(Player(screen.get_size()))
+enemies = pygame.sprite.Group()
+lastEnemy = 0
 score = 0
 clock = pygame.time.Clock()
 
-def move_entities(timeDelta):
+def move_entities(hero, enemies, timeDelta):
     score = 0
-    hero.move(screen.get_size(), timeDelta)
+    hero.sprite.move(screen.get_size(), timeDelta)
     for enemy in enemies:
-        enemy.move(hero.rect.topleft, timeDelta)    
+        enemy.move(hero.sprite.rect.topleft, timeDelta)
+        enemy.shoot(hero.sprite.rect.topleft)
+    for proj in Enemy.projectiles:
+        proj.move(screen.get_size(), timeDelta)
+        if pygame.sprite.spritecollide(proj, hero, False):
+            proj.kill()
+            hero.sprite.health -= 1
+            if hero.sprite.health <= 0:
+                hero.sprite.alive = False
     for proj in Player.projectiles:
         proj.move(screen.get_size(), timeDelta)
-        enemiesHit = pygame.sprite.spritecollide(proj, enemies, True)
+        enemiesHit = pygame.sprite.spritecollide(proj, enemies, False)
         if enemiesHit:
+            enemiesHit[0].kill()
             proj.kill()
-        for item in enemiesHit:
             score += 1
     return score
 
-def render_entities():
-    hero.render(screen)
+def render_entities(hero, enemies):
+    hero.sprite.render(screen)
     for proj in Player.projectiles:
         proj.render(screen)
+    for proj in Enemy.projectiles:
+        proj.render(screen)
     for enemy in enemies:
-        enemy.render(screen)    
+        enemy.render(screen)
     
-def process_keys(keys):
+def process_keys(keys, hero):
     if keys[pygame.K_w]:
-        hero.movementVector[1] -= 1
+        hero.sprite.movementVector[1] -= 1
     if keys[pygame.K_a]:
-        hero.movementVector[0] -= 1
+        hero.sprite.movementVector[0] -= 1
     if keys[pygame.K_s]:
-        hero.movementVector[1] += 1
+        hero.sprite.movementVector[1] += 1
     if keys[pygame.K_d]:
-        hero.movementVector[0] += 1
+        hero.sprite.movementVector[0] += 1
         
-def process_mouse(mouse):
+def process_mouse(mouse, hero):
     if mouse[0]:
-        hero.shoot(pygame.mouse.get_pos())
+        hero.sprite.shoot(pygame.mouse.get_pos())
 
-hero = Player(screen.get_size())
-enemies = pygame.sprite.Group()
-lastEnemy = 0
+def game_loop():
+    done = False
+    hero = pygame.sprite.GroupSingle(Player(screen.get_size()))
+    enemies = pygame.sprite.Group()
+    lastEnemy = pygame.time.get_ticks()
+    score = 0
+    
+    while hero.sprite.alive and not done:
+        keys = pygame.key.get_pressed()
+        mouse = pygame.mouse.get_pressed()
+        currentTime = pygame.time.get_ticks()
+        
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return True
+        screen.fill(BGCOLOR)
+        
+        process_keys(keys, hero)
+        process_mouse(mouse, hero)
+        
+        if lastEnemy < currentTime - 250:
+            spawnSide = random.random()
+            if spawnSide < 0.25:
+                enemies.add(Enemy((0, random.randint(0, size[1]))))
+            elif spawnSide < 0.5:
+                enemies.add(Enemy((size[0], random.randint(0, size[1]))))
+            elif spawnSide < 0.75:
+                enemies.add(Enemy((random.randint(0, size[0]), 0)))
+            else:
+                enemies.add(Enemy((random.randint(0, size[0]), size[1])))
+            lastEnemy = currentTime
+        
+        score += move_entities(hero, enemies, clock.get_time()/17)
+        render_entities(hero, enemies)
+        
+        
+        fps = font.render(str(score), True, pygame.Color('black'))
+        screen.blit(fps, (size[0]-80, 20))
+        
+        pygame.display.flip()
+        clock.tick(60)
 
+done = game_loop()
 while not done:
     keys = pygame.key.get_pressed()
     mouse = pygame.mouse.get_pressed()
@@ -62,28 +114,7 @@ while not done:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             done = True
-    screen.fill(BGCOLOR)
     
-    process_keys(keys)
-    process_mouse(mouse)
-    
-    if lastEnemy < currentTime - 1000:
-        spawnSide = random.random()
-        if spawnSide < 0.25:
-            enemies.add(Enemy((0, random.randint(0, size[1]))))
-        elif spawnSide < 0.5:
-            enemies.add(Enemy((size[0], random.randint(0, size[1]))))
-        elif spawnSide < 0.75:
-            enemies.add(Enemy((random.randint(0, size[0]), 0)))
-        else:
-            enemies.add(Enemy((random.randint(0, size[0]), size[1])))
-        lastEnemy = currentTime
-    
-    score += move_entities(clock.get_time()/17)
-    render_entities()
-    
-    fps = font.render(str(score), True, pygame.Color('black'))
-    screen.blit(fps, (20, 20))
-    pygame.display.flip()
-    clock.tick(60)
+    if keys[pygame.K_r]:
+        done = game_loop()
 pygame.quit()

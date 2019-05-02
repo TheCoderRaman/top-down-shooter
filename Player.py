@@ -18,6 +18,8 @@ class Player(pygame.sprite.Sprite):
                                         y=screenSize[1]//2)
         
         self.pos = [screenSize[0] // 2, screenSize[1] // 2]
+        self.health = 3
+        self.alive = True
         self.movementVector = [0, 0]
         self.movementSpeed = 3
         self.lastShot = 0
@@ -45,11 +47,13 @@ class Player(pygame.sprite.Sprite):
         self.rect.topleft = self.pos
         self.movementVector = [0, 0]
     def shoot(self, mousePos):
-        if pygame.time.get_ticks() - self.lastShot > self.weaponCooldown:
+        currentTime = pygame.time.get_ticks()
+        if currentTime - self.lastShot > self.weaponCooldown:
             direction = (mousePos[0] - self.pos[0], mousePos[1] - self.pos[1]) \
                 if mousePos != self.pos else (1, 1)
-            self.lastShot = pygame.time.get_ticks()
+            self.lastShot = currentTime
             self.projectiles.add(Projectile(self.pos,
-                                            normalize_vector(direction), 5))
+                                            normalize_vector(direction),
+                                            5, 2000, (0, 0, 255)))
     def render(self, surface):
         surface.blit(self.image, self.pos)
