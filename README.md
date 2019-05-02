@@ -1,10 +1,10 @@
 # Top-down shooter
-Before launching the game, you need to install dependecncies.
+Before launching the game, you need to install dependencies.
 ```
 pip install -r requirements.txt
 ```
 
-To launch the game, either launch the `main.py` file or execute a `python main.py` command.
+To launch the game, open `main.exe` file.
 
 ### Controls
 - `WASD` movement
