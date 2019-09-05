@@ -86,7 +86,8 @@ def game_loop():
         process_keys(keys, hero)
         process_mouse(mouse, hero)
         
-        if lastEnemy < currentTime - 250 and len(enemies) < 50:
+        # Enemy spawning process
+        if lastEnemy < currentTime - 200 and len(enemies) < 50:
             spawnSide = random.random()
             if spawnSide < 0.25:
                 enemies.add(Enemy((0, random.randint(0, size[1]))))

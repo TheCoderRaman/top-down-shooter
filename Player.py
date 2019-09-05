@@ -5,6 +5,8 @@ from Projectile import Projectile
 PLAYERCOLOR = (255,   0,   0)
 
 def normalize_vector(vector):
+    if vector == [0, 0]:
+        return [0, 0]    
     pythagoras = math.sqrt(vector[0]*vector[0] + vector[1]*vector[1])
     return (vector[0] / pythagoras, vector[1] / pythagoras)
 
@@ -26,8 +28,7 @@ class Player(pygame.sprite.Sprite):
         self.weaponCooldown = 200
 
     def move(self, screenSize, tDelta):
-        if self.movementVector != [0, 0]:
-            self.movementVector = normalize_vector(self.movementVector)
+        self.movementVector = normalize_vector(self.movementVector)
         newPos = (self.pos[0] + self.movementVector[0]*self.movementSpeed*tDelta,
                   self.pos[1] + self.movementVector[1]*self.movementSpeed*tDelta)
         if newPos[0] < 0:
