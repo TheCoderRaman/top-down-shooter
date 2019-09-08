@@ -2,6 +2,7 @@
 
 import pygame
 import random
+import Weapon
 from Player import Player
 from Enemy import Enemy
 from Projectile import Projectile
@@ -61,6 +62,12 @@ def process_keys(keys, hero):
         hero.sprite.movementVector[1] += 1
     if keys[pygame.K_d]:
         hero.sprite.movementVector[0] += 1
+    if keys[pygame.K_1]:
+        hero.sprite.equippedWeapon = hero.sprite.availableWeapons[0]
+    if keys[pygame.K_2]:
+        hero.sprite.equippedWeapon = hero.sprite.availableWeapons[1]
+    if keys[pygame.K_3]:
+        hero.sprite.equippedWeapon = hero.sprite.availableWeapons[2]
         
 def process_mouse(mouse, hero):
     if mouse[0]:

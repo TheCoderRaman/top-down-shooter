@@ -1,6 +1,6 @@
 import pygame
 import math
-from Projectile import Projectile
+import Weapon
 
 PLAYERCOLOR = (255,   0,   0)
 
@@ -24,8 +24,10 @@ class Player(pygame.sprite.Sprite):
         self.alive = True
         self.movementVector = [0, 0]
         self.movementSpeed = 3
-        self.lastShot = pygame.time.get_ticks()
-        self.weaponCooldown = 200
+        self.availableWeapons = [Weapon.Pistol(),
+                                 Weapon.Shotgun(),
+                                 Weapon.MachineGun()]
+        self.equippedWeapon = self.availableWeapons[0]
 
     def move(self, screenSize, tDelta):
         self.movementVector = normalize_vector(self.movementVector)
@@ -47,14 +49,9 @@ class Player(pygame.sprite.Sprite):
         
         self.rect.topleft = self.pos
         self.movementVector = [0, 0]
+        
     def shoot(self, mousePos):
-        currentTime = pygame.time.get_ticks()
-        if currentTime - self.lastShot > self.weaponCooldown:
-            direction = (mousePos[0] - self.pos[0], mousePos[1] - self.pos[1]) \
-                if mousePos != self.pos else (1, 1)
-            self.lastShot = currentTime
-            self.projectiles.add(Projectile(self.pos,
-                                            normalize_vector(direction),
-                                            5, 2000, (0, 0, 255)))
+        self.equippedWeapon.shoot(self, mousePos)
+        
     def render(self, surface):
         surface.blit(self.image, self.pos)
