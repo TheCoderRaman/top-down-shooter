@@ -2,7 +2,6 @@
 
 import pygame
 import random
-import Weapon
 from Player import Player
 from Enemy import Enemy
 from Projectile import Projectile
@@ -109,13 +108,17 @@ def game_loop():
         score += move_entities(hero, enemies, clock.get_time()/17)
         render_entities(hero, enemies)
         
+        # Health and score render
         for hp in range(hero.sprite.health):
             screen.blit(healthRender, (15 + hp*35, 0))
         scoreRender = scoreFont.render(str(score), True, pygame.Color('black'))
-        screen.blit(scoreRender, (size[0]-50, 20))
+        scoreRect = scoreRender.get_rect()
+        scoreRect.right = size[0] - 20
+        scoreRect.top = 20
+        screen.blit(scoreRender, scoreRect)
         
         pygame.display.flip()
-        clock.tick(60)
+        clock.tick(120)
 
 done = game_loop()
 while not done:
